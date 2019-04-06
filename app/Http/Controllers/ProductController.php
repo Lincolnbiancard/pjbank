@@ -135,10 +135,13 @@ class ProductController extends Controller
             'grupo' => $request->grupo,
         ];
 
-        $response = $this->apiPjbank->generate($headers, $body, 'POST');
+        $response = json_decode($this->apiPjbank->generate($headers, $body, 'POST'));
 
-        
-        return view('teste')->with('response', json_decode($response));
+        if ($response->msg != "Sucesso.") {
+            return view('Boleto')->with('response', $response)->with('valorTotal', $valorTotal);
+        }
+
+        return view('teste')->with('response', $response);
     }
 
     public function gridPost(Request $request) {

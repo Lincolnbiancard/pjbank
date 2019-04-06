@@ -6,9 +6,9 @@
         <div class="row">
             <div class="mx-auto col-sm-6">
 
-                    @if(!empty($response->msg) && session($response->msg) != null  ?  $response->msg : '')
-                        Erro: {{$response->msg}}
-                    @endif
+                @if(!empty($response->msg) && $response->msg !== "Sucesso.")
+                <h3><span class="alert-danger">ERRO: {{$response->msg}}</span></h3>
+                 @endif
                         <!-- form user info -->
                         <div class="card">
                             <div class="card-header">
