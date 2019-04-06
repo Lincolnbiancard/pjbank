@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use vendor\laravel\framework\src\Illuminate\Pagination\UrlWindow;
 use App\Services\ApiPjbank;
 use Illuminate\Support\Facades\DB;
+use \Illuminate\Database\QueryException;
 
 class ProductController extends Controller
 {
@@ -33,18 +34,18 @@ class ProductController extends Controller
         return view('FormProduct');
     }
 
-   
-    public function create()
-    {
-        
-    }
+
 
     public function store(Request $request)
     {
-        $data = $request->all();
-        $this->product->create($data);
+        try {
+            $data = $request->all();
+            $this->product->create($data);
         
-        return redirect('formproduct');
+            return redirect('formproduct');
+        } catch (QueryException $exception) {
+            return view('error')->with('error', 'Erro ao cadastrar produto!');
+        }
     }
 
     public function show($codigoProduto)
@@ -72,20 +73,33 @@ class ProductController extends Controller
 
     public function update($codigoProduto, Request $request)
     {
-        $request = $request->all();
-        $product = $this->product->find($codigoProduto);
-        $product->update($request);
 
-        return redirect('grid');
+        try {
+            
+            $request = $request->all();
+            $product = $this->product->find($codigoProduto);
+            $product->update($request);
+    
+            return redirect('grid');
+
+        } catch (QueryException $exception) {
+            
+            return view('error')->with('error', 'Erro ao Atualizar o produto!');
+        }
     }
 
    
     public function destroy($codigoProduto)
     {
-        $product = $this->product->find($codigoProduto);
-        $product->delete();
-        return redirect('grid');
+        try {
+            $product = $this->product->find($codigoProduto);
+            $product->delete();
+            return redirect('grid');
+        } catch (QueryException $exception) {
+            return view('error')->with('error', 'Erro ao Deletar o produto!');
+        }
     }
+
 
     public function grid($param = null, Request $request)
     {
@@ -100,7 +114,6 @@ class ProductController extends Controller
         return view('grid')->with('products', $products);
     }
 
-  
 
     public function generateBillet(Request $request)
     {
